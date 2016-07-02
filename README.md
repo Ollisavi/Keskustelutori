@@ -1,0 +1,2 @@
+# Keskustelutori
+Tietokantojen perusteiden ryhmätyö

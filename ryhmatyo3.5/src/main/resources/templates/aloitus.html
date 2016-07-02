@@ -10,48 +10,56 @@
 
         <font face="Cambria">
 
-            <div align="right" style="margin-right: 7%">
-                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" WIDTH="15%" HEIGHT="15%">
+            <!-- Yksisarvisen kuva-->
+            <div align="right" style="position:relative; right: 5%">
+                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" style="width:15%; height:15%">
                 </img>
             </div>
 
+            <!-- Etusivulle -nappula-->
+            <form method="get" action="/etusivu" style="position:fixed; top:5%; left:25%;">
+                <button type="submit">Etusivulle</button>
+            </form>
+
+            <!-- Takaisin -nappula-->
+            <form method="get" th:action="${takaisin}" style="position:fixed; top:9%; left:25%;">
+                <button type="submit">Takaisin</button>
+            </form>
+
+            <!-- Asetetaan marginaali-->
             <div style="margin-left: 33%">
 
-                <form method="get" action="/etusivu">
-                    <button type="submit">Etusivulle</button>
-                </form>
-
-                <form method="get" th:action="${takaisin}">
-                    <button type="submit">Takaisin</button>
-                </form>
-
+                <!-- Foorumin nimi headeriin-->
+                <div id="header">
+                    <font face="Lucida Handwriting">
+                        <h1><font size="6"> Yksisarvisen keskustelufoorumi</font></h1>
+                        <p style="color:indigo; text-align: center"><font size="4"><i>Tehneet: <b>JJOS</b></i></font></p>
+                    </font>
+                </div>
+           
                 <h1 th:text="${otsikko}">Aloitus</h1>
 
                 <h2><font size="3">Keskustele aiheesta:</font></h2> 
 
-                <table style="width:60%">
-
+                <!-- Lista viesteistä esitetty taulukon avulla-->
+                <table>
                     <tr valign="top" th:each="viesti: ${viestit}">
-                        <td> <span th:text="${viesti.getJulkaisija()}"> julkaisija </span> </td>
-                        <td> <span th:text="${viesti.getSisalto()}"> sis&#228;lt&#246; </span> </td>
-                        <td> <span th:text="${viesti.getAika()}"> julkaisuaika </span> </td>
+                        <td width="115px"> <span th:text="${viesti.getJulkaisija()}"> julkaisija </span> </td>
+                        <td width="485px"> <span th:text="${viesti.getSisalto()}"> sis&#228;lt&#246; </span> </td>
+                        <td width="150px"> <span th:text="${viesti.getAika()}"> julkaisuaika </span> </td>
                     </tr> 
                 </table>
 
                 <p></p>
 
+                <!-- Uuden viestin lisäämisalue-->
                 <form method="POST" th:action="${url}">
                     Julkaisija:<br/>
                     <input maxlength="16" type="text" name="julkaisija" required=""/><br/>
                     Viesti:<br/>            
-                    <textarea maxlength="2048" name="sisalto" required="" rows="8" cols="96">Kirjoita viesti t&#228;h&#228;n. Enint&#228;&#228;n 2048 merkki&#228;. </textarea><br/>
+                    <textarea maxlength="2048" name="sisalto" required="" rows="8" cols="96" placeholder="Kirjoita viesti t&#228;h&#228;n. Enint&#228;&#228;n 2048 merkki&#228;."></textarea><br/>
                     <input type="submit" value="Lis&#228;&#228; viesti"/>
                 </form>
-
-                <!--
-                <form method="get" th:action="${}">
-                    <button type="submit">Sivu </button>
-                </form> -->
 
             </div>
         </font>

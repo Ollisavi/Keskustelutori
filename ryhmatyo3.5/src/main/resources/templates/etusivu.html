@@ -10,24 +10,34 @@
 
         <font face="Cambria">
 
-            <div align="right" style="margin-right: 7%">
-                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" WIDTH="15%" HEIGHT="15%">
+            <!-- Yksisarvisen kuva-->
+            <div align="right" style="margin-right: 5%">
+                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" style="width:15%; height:15%">
                 </img>
             </div>
 
+            <!-- Asetetaan marginaali-->
             <div style="margin-left: 33%">
+                
+                <!-- Foorumin nimi headeriin-->
+                <div id="header">
+                    <font face="Lucida Handwriting">
+                        <h1><font size="6">Yksisarvisen keskustelufoorumi</font></h1>
+                        <p style="color:indigo; text-align: center"><font size="4"><i>Tehneet: <b>JJOS</b></i></font></p>
+                    </font>
+                </div>
+                
                 <h1>Etusivu</h1>
 
+                <!-- Lista alueista esitetty taulukon avulla-->
                 <table style="width:40%">
-
                     <tr>
                         <th align="left">Alue</th>
                         <th align="left">Viestej&#228;</th> 
                         <th align="left">Viimeisin Viesti</th>
                     </tr>
-
                     <tr th:each="alue: ${alueet}">
-                        <td><a th:href="${etusivu}+${alue.getOtsikko()}" th:text="${alue.getOtsikko()}"> otsikko </a>  </td>
+                        <td><a th:href="${etusivu}+${alue.getId()}" th:text="${alue.getOtsikko()}"> otsikko </a>  </td>
                         <td> <span th:text="${alue.laskeViestit()}"> viestit </span> </td>
                         <td> <span th:text="${alue.viimeisinViesti()}"> aika </span> </td>
                     </tr> 
@@ -35,9 +45,10 @@
 
                 <p></p>
 
+                <!-- Uuden alueen lisäämisalue-->
                 <form method="POST" action="/etusivu">
                     Alueen nimi:<br/>
-                    <input maxlength="16" type="text" name="uusiAlue" required=""/><br/>
+                    <input maxlength="16" type="text" name="uusiAlue" required="" /><br/>
                     <input type="submit" value="Lis&#228;&#228; alue"/>
                 </form>
                 
@@ -45,3 +56,4 @@
         </font>
     </body>
 </html>
+

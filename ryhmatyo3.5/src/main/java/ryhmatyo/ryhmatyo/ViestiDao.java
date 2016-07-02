@@ -46,13 +46,12 @@ public class ViestiDao {
         return viestit;
     }
 
-    public void addNew(String sisalto, String julkaisija, int aloitus) throws SQLException {
-        String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+    public void addNew(String sisalto, String julkaisija, int aloitus, String aika) throws SQLException {
 
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO viesti (sisalto, julkaisuaika, julkaisija, aloitus) VALUES (?,?,?,?);");
         stmt.setObject(1, sisalto);
-        stmt.setObject(2, currentTimestamp);
+        stmt.setObject(2, aika);
         stmt.setObject(3, julkaisija);
         stmt.setObject(4, aloitus);
 
@@ -60,4 +59,5 @@ public class ViestiDao {
         stmt.close();
         connection.close();
     }
+    
 }

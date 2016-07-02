@@ -15,46 +15,30 @@ public class Alue {
 
     private String alueOtsikko;
     private List<Aloitus> aloitukset;
+    private int id;
 
-    public Alue(String alueOtsikko, List<Aloitus> aloitukset) {
+    public Alue(String alueOtsikko, List<Aloitus> aloitukset, int id) {
         this.alueOtsikko = alueOtsikko;
         this.aloitukset = aloitukset;
+        this.id=id;
 
     }
 
     public void lisaaAloitus(Aloitus aloitus) {
+        this.aloitukset.add(aloitus);
+        Collections.sort(this.aloitukset, (Aloitus t, Aloitus t1) -> t1.viimeisinViesti().compareTo(t.viimeisinViesti()));
 
-        boolean lisatty = false;
-        String uudenViimeisin = aloitus.viimeisinViesti();
-        for (int n = 0; n < aloitukset.size(); n++) {
-            if (aloitukset.get(n).viimeisinViesti().compareToIgnoreCase(uudenViimeisin) < 0) {
-                aloitukset.add(n, aloitus);
-                lisatty = true;
-                break;
-            }
-        }
-        if (!lisatty) {
-            this.aloitukset.add(aloitus);
-        }
-    }
-
-    public Alue(String alueOtsikko) {
-        this.alueOtsikko = alueOtsikko;
-        this.aloitukset = new ArrayList<>();
     }
 
     public String getOtsikko() {
         return alueOtsikko;
     }
+    
+    public int getId(){
+        return this.id;
+    }
 
     public List<Aloitus> getAloitukset() {
-//        Collections.sort(aloitukset, new Comparator<Aloitus>() {
-//            @Override
-//            public int compare(Aloitus t, Aloitus t1) {
-//                return t1.viimeisinViesti().compareTo(t.viimeisinViesti());
-//            }
-//
-//        });
         return this.aloitukset;
     }
 

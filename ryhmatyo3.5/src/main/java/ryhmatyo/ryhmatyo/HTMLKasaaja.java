@@ -34,7 +34,7 @@ public class HTMLKasaaja {
         HashMap map = new HashMap<>();
         map.put("aloitukset", alue.getAloitukset());
         map.put("otsikko", alue.getOtsikko());
-        String url = "/etusivu/alue=" + alue.getOtsikko();
+        String url = "/etusivu/alue=" + alue.getId();
         map.put("url", url);
         map.put("linkinAlku", url + "/aloitus=");
 
@@ -45,8 +45,8 @@ public class HTMLKasaaja {
         HashMap map = new HashMap<>();
         map.put("viestit", aloitus.getViestit());
         map.put("otsikko", aloitus.getAloitusOtsikko());
-        map.put("url", "/etusivu/alue=" + aloituksenAlue.getOtsikko() + "/aloitus=" + aloitus.getId());
-        map.put("takaisin", "/etusivu/alue=" + aloituksenAlue.getOtsikko());
+        map.put("url", "/etusivu/alue=" + aloituksenAlue.getId() + "/aloitus=" + aloitus.getId());
+        map.put("takaisin", "/etusivu/alue=" + aloituksenAlue.getId());
 
         return thlMoottori.render(new ModelAndView(map, "aloitus"));
     }

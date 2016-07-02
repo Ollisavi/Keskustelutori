@@ -28,15 +28,16 @@ public class AlueDao {
 
     public List<Alue> findAll() throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM alue ORDER BY alue_otsikko ASC;");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM alue ORDER BY LOWER(alue_otsikko) ASC;");
 
         ResultSet rs = stmt.executeQuery();
         List<Alue> alueet = new ArrayList<>();
         while (rs.next()) {
             String haettuOtsikko = rs.getString("alue_otsikko");
-            List<Aloitus> aloitukset = aloitusDao.findAllInAlue(haettuOtsikko);
+            int alue_id = rs.getInt("alue_id");
+            List<Aloitus> aloitukset = aloitusDao.findAllInAlue(alue_id);
 
-            alueet.add(new Alue(haettuOtsikko, aloitukset));
+            alueet.add(new Alue(haettuOtsikko, aloitukset, alue_id));
         }
 
         rs.close();
@@ -58,4 +59,23 @@ public class AlueDao {
             connection.close();
         }
     }
+
+    public int findNewestId() throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT alue_id FROM alue ORDER BY alue_id DESC LIMIT 1;");
+        ResultSet rs = stmt.executeQuery();
+
+        boolean hasOne = rs.next();
+        if (!hasOne) {
+            return -1;
+        }
+
+        int alue_id = rs.getInt("alue_id");
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return alue_id;
+    }
+    
 }

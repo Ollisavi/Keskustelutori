@@ -78,7 +78,7 @@ public class Kayttoliittyma {
         if (alue == null) {
             kaynnista();
         } else {
-            List<Aloitus> aloitukset = aloitusDao.findAllInAlue(alue.getOtsikko());
+            List<Aloitus> aloitukset = aloitusDao.findAllInAlue(alue.getId());
             if (aloitukset.isEmpty()) {
                 System.out.println("Alueella ei ole yhtään keskustelunaloitusta.");
                 System.out.println(aloitukset.size() + 1 + "\tLuo uusi");
@@ -98,7 +98,7 @@ public class Kayttoliittyma {
 
     private Aloitus valitseAloitus(Alue alue) throws SQLException {
         Aloitus aloitus = null;
-        List<Aloitus> aloitukset = aloitusDao.findAllInAlue(alue.getOtsikko());
+        List<Aloitus> aloitukset = aloitusDao.findAllInAlue(alue.getId());
         int index = kysy("Mikä valitaan (anna numero)?");
         if (index == aloitukset.size() + 1) {
             luoUusiAloitus();

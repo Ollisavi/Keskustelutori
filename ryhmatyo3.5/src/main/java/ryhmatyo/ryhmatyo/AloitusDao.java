@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,12 +27,10 @@ public class AloitusDao {
         this.viestiDao = viestiDao;
     }
 
-    public List<Aloitus> findAllInAlue(String alueOtsikko) throws SQLException {
+    public List<Aloitus> findAllInAlue(int alueId) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM aloitus, viesti "
-                + "WHERE alue_otsikko = ? AND viesti.aloitus = aloitus.id"
-                + " GROUP BY aloitus.id, viesti.id_viesti ORDER BY viesti.julkaisuaika DESC;");
-        stmt.setObject(1, alueOtsikko);
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM aloitus WHERE alue_id = ?; ");
+        stmt.setObject(1, alueId);
         ResultSet rs = stmt.executeQuery();
 
         List<Aloitus> aloitukset = new ArrayList<>();
@@ -42,6 +41,7 @@ public class AloitusDao {
 
             aloitukset.add(new Aloitus(aloitusOtsikko, viestit, id));
         }
+        Collections.sort(aloitukset, (Aloitus t, Aloitus t1) -> t1.viimeisinViesti().compareTo(t.viimeisinViesti()));        
 
         rs.close();
         stmt.close();
@@ -49,11 +49,11 @@ public class AloitusDao {
         return aloitukset;
     }
 
-    public void addNew(String aloitusOtsikko, String alueOtsikko) throws SQLException {
+    public void addNew(String aloitusOtsikko, int alueId) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("INSERT INTO aloitus (aloitus_otsikko, alue_otsikko) VALUES (?,?);");
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO aloitus (aloitus_otsikko, alue_id) VALUES (?,?);");
         stmt.setObject(1, aloitusOtsikko);
-        stmt.setObject(2, alueOtsikko);
+        stmt.setObject(2, alueId);
 
         stmt.executeUpdate();
         stmt.close();

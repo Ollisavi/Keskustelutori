@@ -10,26 +10,37 @@
 
         <font face="Cambria">
 
-            <div align="right" style="margin-right: 7%">
-                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" WIDTH="15%" HEIGHT="15%">
+            <!-- Yksisarvisen kuva-->
+            <div align="right" style="margin-right: 5%">
+                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" style="width:15%; height:15%">
                 </img>
             </div>
 
+            <!-- Etusivulle -nappula-->
+            <form method="get" action="/etusivu" style="position:fixed; top:5%; left:25%;">
+                <button type="submit">Etusivulle</button>
+            </form>
+
+            <!-- Asetetaan marginaali-->
             <div style="margin-left: 33%">
-                <form method="get" action="/etusivu">
-                    <button type="submit">Etusivulle</button>
-                </form>
+
+                <!-- Foorumin nimi headeriin-->
+                <div id="header">
+                    <font face="Lucida Handwriting">
+                        <h1><font size="6">Yksisarvisen keskustelufoorumi</font></h1>
+                        <p style="color:indigo; text-align: center"><font size="4"><i>Tehneet: <b>JJOS</b></i></font></p>
+                    </font>
+                </div>
 
                 <h1 th:text="${otsikko}">Alue</h1>
 
+                <!-- Lista aloituksista esitetty taulukon avulla-->
                 <table style="width:40%">
-
                     <tr>
                         <th align="left">Aloitus</th>
                         <th align="left">Viestej&#228;</th> 
                         <th align="left">Viimeisin Viesti</th>
                     </tr>
-
                     <tr th:each="aloitus: ${aloitukset}">
                         <td><a th:href="${linkinAlku}+${aloitus.getId()}" th:text="${aloitus.getAloitusOtsikko()}"> otsikko </a>  </td>
                         <td> <span th:text="${aloitus.laskeViestit()}"> viestit </span> </td>
@@ -39,21 +50,17 @@
 
                 <p></p>
 
+                <!-- Uuden aloituksen lisäämisalue-->
                 <form method="POST" th:action="${url}">
                     Uusi aloitus:<br/>
                     <input maxlength="32" type="text" name="uusiAloitus" required=""/><br/>
                     Julkaisija:<br/>            
                     <input maxlength="16" type="text" name="julkaisija" required=""/><br/>            
                     Viesti:<br/>            
-                    <textarea maxlength="2048" name="sisalto" required="" rows="8" cols="96">Kirjoita viesti t&#228;h&#228;n. Enint&#228;&#228;n 2048 merkki&#228;. </textarea><br/>
+                    <textarea maxlength="2048" name="sisalto" required="" rows="8" cols="96" placeholder="Kirjoita viesti t&#228;h&#228;n. Enint&#228;&#228;n 2048 merkki&#228;."></textarea><br/>
                     <input type="submit" value="Lis&#228;&#228; aloitus"/>
                 </form>
 
-                <!--
-                <form method="get" th:action="${}">
-                    <button type="submit">Sivu </button>
-                </form> -->
-                
             </div>
         </font>
     </body>

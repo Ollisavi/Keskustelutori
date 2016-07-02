@@ -41,12 +41,13 @@ public class Database {
         if (this.databaseAddress.contains("postgres")) {
             //Jos ollaan heroussa ja käytössä postresql:
             lista.add("CREATE TABLE alue ("
-                    + "alue_otsikko varchar(16) PRIMARY KEY UNIQUE);");
+                    + "alue_id SERIAL PRIMARY KEY, "
+                    + "alue_otsikko varchar(16) NOT NULL UNIQUE);");
             lista.add("CREATE TABLE aloitus ("
                     + "id SERIAL PRIMARY KEY, "
                     + "aloitus_otsikko varchar(32) NOT NULL, "
-                    + "alue_otsikko varchar(16) NOT NULL, "
-                    + "FOREIGN KEY (alue_otsikko) REFERENCES alue(alue_otsikko));");
+                    + "alue_id integer NOT NULL, "
+                    + "FOREIGN KEY (alue_id) REFERENCES alue(alue_id));");
             lista.add("CREATE TABLE viesti ("
                     + "id_viesti SERIAL PRIMARY KEY, "
                     + "sisalto varchar(2048) NOT NULL, "
@@ -66,10 +67,11 @@ public class Database {
             lista.add("CREATE TABLE aloitus ("
                     + "id integer PRIMARY KEY, "
                     + "aloitus_otsikko varchar(32) NOT NULL, "
-                    + "alue_otsikko varchar(16) NOT NULL, "
-                    + "FOREIGN KEY (alue_otsikko) REFERENCES alue(alue_otsikko));");
+                    + "alue_id varchar(16) NOT NULL, "
+                    + "FOREIGN KEY (alue_id) REFERENCES alue(alue_id));");
             lista.add("CREATE TABLE alue ("
-                    + "alue_otsikko varchar(16) PRIMARY KEY);");
+                    + "alue_id integer PRIMARY KEY, "
+                    + "alue_otsikko varchar(16) NOT NULL);");
         }
         Connection conn;
         Statement stmt;
@@ -97,6 +99,5 @@ public class Database {
 
         }
     }
-
 
 }

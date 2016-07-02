@@ -2,11 +2,14 @@ package ryhmatyo.ryhmatyo;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
@@ -98,11 +101,11 @@ public class Palvelin {
 
     public void juonnaAlue(Alue alue) {
 
-        get("*/alue=" + alue.getOtsikko(), (req, res) -> {
+        get("*/alue=" + alue.getId(), (req, res) -> {
             return alueHakija.get(alue);
         });
 
-        post("*/alue=" + alue.getOtsikko(), (req, res) -> {
+        post("*/alue=" + alue.getId(), (req, res) -> {
             String aloitusOtsikko = req.queryParams("uusiAloitus");
             String julkaisija = req.queryParams("julkaisija");
             String aloitusSisalto = req.queryParams("sisalto");
@@ -147,10 +150,17 @@ public class Palvelin {
     }
 
     public boolean lisaaAlue(String alueOtsikko) {
+        //Poistetaan tyhjät lyönnit alusta ja lopusta ja varmistetaan, että tulos ei ole tyhjä String.        
+        alueOtsikko=alueOtsikko.trim();
+        if (alueOtsikko.equals("")){
+            return false;
+        }
 
+        int id;
         try {
             //Lisätään alue tietokantaan.
             alueDao.addNew(alueOtsikko);
+            id = alueDao.findNewestId();
         } catch (SQLException ex) {
             //Jos ei onnistunut, ei tehdä mitään muutakaan.
             System.out.println("Alueen lisäys tietokantaan epäonnistui.");
@@ -159,7 +169,8 @@ public class Palvelin {
         }
 
         //Luodaan uusi Alue otus, joka lisätään jo tunnettuihin alue-otuksiin.
-        Alue alue = new Alue(alueOtsikko);
+        ArrayList<Aloitus> uudetAloitukset = new ArrayList<>();
+        Alue alue = new Alue(alueOtsikko, uudetAloitukset, id);
         alueet.add(alue);
         //Järjestetään, jotta alueet palautuvat selaimelle aakkosjärjestyksessä.
         Collections.sort(alueet, (Alue t, Alue t1) -> -t1.getOtsikko().compareTo(t.getOtsikko()));
@@ -174,27 +185,33 @@ public class Palvelin {
     }
 
     public boolean lisaaAloitus(String aloitusOtsikko, String julkaisija, String aloitusSisalto, Alue alue) throws SQLException {
-
+        aloitusOtsikko=aloitusOtsikko.trim();
+        if (aloitusOtsikko.equals("")){
+            return false;
+        }
+        julkaisija=julkaisija.trim();
+        if (julkaisija.equals("")){
+            return false;
+        }
+        
         for (Aloitus aloitus : alue.getAloitukset()) {
             if (aloitus.getAloitusOtsikko().equals(aloitusOtsikko)) {
                 return false;
             }
         }
 
-        String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        Viesti aloitusViesti = new Viesti(aloitusSisalto, currentTimestamp, julkaisija);
-        List<Viesti> uudenAloituksenViestit = new ArrayList<>();
-        uudenAloituksenViestit.add(aloitusViesti);
-
         try {
-            aloitusDao.addNew(aloitusOtsikko, alue.getOtsikko());
-            viestiDao.addNew(aloitusSisalto, julkaisija, aloitusDao.findNewestId());
+            aloitusDao.addNew(aloitusOtsikko, alue.getId());
+            viestiDao.addNew(aloitusSisalto, julkaisija, aloitusDao.findNewestId(), getAika());
         } catch (SQLException ex) {
             System.out.println("Aloituksen tietokantaan lisääminen epäonnistui.");
             Logger.getLogger(Palvelin.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 
+        Viesti aloitusViesti = new Viesti(aloitusSisalto, getAika(), julkaisija);
+        List<Viesti> uudenAloituksenViestit = new ArrayList<>();
+        uudenAloituksenViestit.add(aloitusViesti);
         Aloitus aloitus = new Aloitus(aloitusOtsikko, uudenAloituksenViestit, aloitusDao.findNewestId());
         alue.lisaaAloitus(aloitus);
         juonnaAloitus(aloitus, alue);
@@ -207,21 +224,36 @@ public class Palvelin {
     }
 
     public boolean lisaaViesti(String julkaisija, String sisalto, Aloitus aloitus, Alue alue) {
+        julkaisija=julkaisija.trim();
+        if (julkaisija.equals("")){
+            return false;
+        }
+        
         try {
-            viestiDao.addNew(sisalto, julkaisija, aloitus.getId());
+            viestiDao.addNew(sisalto, julkaisija, aloitus.getId(), getAika());
         } catch (SQLException ex) {
             System.out.println("Viestin lisääminen tietokantaan epäonnistui.");
             Logger.getLogger(Palvelin.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 
-        String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        aloitus.lisaaViesti(new Viesti(sisalto, currentTimestamp, julkaisija));
-
+        aloitus.lisaaViesti(new Viesti(sisalto, getAika(), julkaisija));
+        Collections.sort(alue.getAloitukset(), (Aloitus t, Aloitus t1) -> t1.viimeisinViesti().compareTo(t.viimeisinViesti()));
+        
         aloitusHakija.put(aloitus, kasaaja.kasaaAloitus(aloitus, alue));
         alueHakija.put(alue, kasaaja.kasaaAlue(alue));
         etusivunHakija.put("etusivu", kasaaja.kasaaEtusivu(alueet));
 
+        
         return true;
     }
+
+    public String getAika() {
+        Date date = new Date();
+        date.setTime(date.getTime() + 10800000);
+        SimpleDateFormat muoto = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String aika = muoto.format(date);
+        return aika;
+    }
+    
 }

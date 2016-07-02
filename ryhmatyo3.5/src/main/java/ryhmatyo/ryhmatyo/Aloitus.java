@@ -14,11 +14,7 @@ public class Aloitus {
         this.id=id;
     }
 
-    public void lisaaViesti(Viesti viesti) {
-        
-        boolean lisatty = false;
-        
-        
+    public void lisaaViesti(Viesti viesti) {        
         this.viestit.add(viesti);
     }
 
@@ -43,16 +39,6 @@ public class Aloitus {
     }
 
     public String viimeisinViesti() {
-//        String viimeisinViesti = "0";
-//        for (Viesti v : viestit) {
-//            if (v.getAika().compareTo(viimeisinViesti)>0) {
-//                viimeisinViesti=v.getAika();
-//            }
-//        }
-//        if (viimeisinViesti.equals("0")){
-//            viimeisinViesti = "";
-//        }
-
         return this.viestit.get(this.viestit.size() -1 ).getAika();
     }
 

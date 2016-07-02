@@ -1,0 +1,60 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>Keskustelutori</title>
+        <meta charset="utf-8" />
+    </head>
+
+    <body background="http://3.bp.blogspot.com/_bGalaaXw710/TEFYo_DIiQI/AAAAAAAAAAM/u282NDuEkpc/s1600/op.png" style="background-attachment: fixed; background-repeat: no-repeat; background-size: cover;">
+
+        <font face="Cambria">
+
+            <div align="right" style="margin-right: 7%">
+                <img src="https://cdn.vectorstock.com/i/composite/94,56/cartoon-baby-unicorn-vector-249456.jpg" alt="" align="right" WIDTH="15%" HEIGHT="15%">
+                </img>
+            </div>
+
+            <div style="margin-left: 33%">
+                <form method="get" action="/etusivu">
+                    <button type="submit">Etusivulle</button>
+                </form>
+
+                <h1 th:text="${otsikko}">Alue</h1>
+
+                <table style="width:40%">
+
+                    <tr>
+                        <th align="left">Aloitus</th>
+                        <th align="left">Viestej&#228;</th> 
+                        <th align="left">Viimeisin Viesti</th>
+                    </tr>
+
+                    <tr th:each="aloitus: ${aloitukset}">
+                        <td><a th:href="${linkinAlku}+${aloitus.getId()}" th:text="${aloitus.getAloitusOtsikko()}"> otsikko </a>  </td>
+                        <td> <span th:text="${aloitus.laskeViestit()}"> viestit </span> </td>
+                        <td> <span th:text="${aloitus.viimeisinViesti()}"> aika </span> </td>
+                    </tr> 
+                </table>
+
+                <p></p>
+
+                <form method="POST" th:action="${url}">
+                    Uusi aloitus:<br/>
+                    <input maxlength="32" type="text" name="uusiAloitus" required=""/><br/>
+                    Julkaisija:<br/>            
+                    <input maxlength="16" type="text" name="julkaisija" required=""/><br/>            
+                    Viesti:<br/>            
+                    <textarea maxlength="2048" name="sisalto" required="" rows="8" cols="96">Kirjoita viesti t&#228;h&#228;n. Enint&#228;&#228;n 2048 merkki&#228;. </textarea><br/>
+                    <input type="submit" value="Lis&#228;&#228; aloitus"/>
+                </form>
+
+                <!--
+                <form method="get" th:action="${}">
+                    <button type="submit">Sivu </button>
+                </form> -->
+                
+            </div>
+        </font>
+    </body>
+</html>
